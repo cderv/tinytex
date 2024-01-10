@@ -74,6 +74,9 @@ jobs:
           Rscript "tools/install-windows-base.R" # the infraonly scheme
           7z a TinyTeX-0.zip $Env:APPDATA\\TinyTeX
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Build TinyTeX-1.zip
         if: false
         run: |
