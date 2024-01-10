@@ -31,7 +31,7 @@ powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.Security
 
 rem an automated installation of TeXLive (infrastructure only)
 cd install-tl-*
-@echo | install-tl-windows.bat -no-gui -profile=../tinytex.profile -repository %TLREPO%
+@echo | install-tl-windows.bat -no-gui -profile=../tinytex.profile -repository %TLREPO% -v -v -debug-setup-vars
 
 del TinyTeX\install-tl.log ..\tinytex.profile
 if exist instal-tl del install-tl
