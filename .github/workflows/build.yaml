@@ -346,7 +346,6 @@ jobs:
   cleaning:
     if: false
     needs: [new-release, deploy]
-    if: ${{ failure() || cancelled() }}
     runs-on: ubuntu-latest
     name: Cleaning step in case of error
     steps:
