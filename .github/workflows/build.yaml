@@ -10,10 +10,11 @@ env:
   GH_TOKEN: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
   # required for GH to run on another repo (-R option)
   # https://cli.github.com/manual/gh_help_environment
-  GH_REPO: rstudio/tinytex-releases
+  GH_REPO: cderv/tinytex-releases
 
 jobs:
   new-release:
+    if: false
     runs-on: ubuntu-latest
     name: Create new daily draft release
     outputs:
@@ -30,7 +31,7 @@ jobs:
           echo "tag=${tag}" >> $GITHUB_OUTPUT
 
   build-windows:
-    needs: [new-release]
+    # needs: [new-release]
     runs-on: windows-latest
     name: Build Bundles For Windows
 
@@ -74,27 +75,32 @@ jobs:
           7z a TinyTeX-0.zip $Env:APPDATA\\TinyTeX
 
       - name: Build TinyTeX-1.zip
+        if: false
         run: |
           Rscript "tools/install-windows-more.R"  # extra packages for compiling R Markdown
           7z a TinyTeX-1.zip $Env:APPDATA\\TinyTeX
 
       - name: Build TinyTeX.zip
+        if: false
         run: |
           Rscript "tools/test-basic.R"  # even more LaTeX packages
           7z a TinyTeX.zip $Env:APPDATA\\TinyTeX
 
       - name: Build TinyTeX-2 (scheme-full)
+        if: false
         run: |
           Rscript "tools/build-scheme-full.R"
           7z a -sfx TinyTeX-2.exe $Env:APPDATA\\TinyTeX
 
       - name: Test Installation script
+        if: false
         env:
           TINYTEX_INSTALLER: TinyTeX-0
         run: tools\\install-bin-windows.bat
         shell: cmd
 
       - name: Upload bundles
+        if: false
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 5
@@ -104,6 +110,7 @@ jobs:
             gh release upload ${{needs.new-release.outputs.draft-tag}} TinyTeX-0.zip TinyTeX-1.zip TinyTeX.zip TinyTeX-2.exe --clobber
 
   build-linux:
+    if: false
     needs: [new-release]
     name: Build Bundles For Linux
     runs-on: ubuntu-latest
@@ -197,6 +204,7 @@ jobs:
             gh release upload ${{needs.new-release.outputs.draft-tag}} TinyTeX-0.tar.gz TinyTeX-1.tar.gz TinyTeX.tar.gz TinyTeX-2.tar.gz installer-unix.tar.gz regex.tar.gz --clobber
 
   build-mac:
+    if: false
     needs: [new-release]
     runs-on: macos-latest
     name: Build Bundles For macOS
@@ -268,6 +276,7 @@ jobs:
             gh release upload ${{needs.new-release.outputs.draft-tag}} TinyTeX-0.tgz TinyTeX-1.tgz TinyTeX.tgz TinyTeX-2.tgz --clobber
 
   tinitex:
+    if: false
     needs: [new-release]
     name: Get tinitex release
     runs-on: ubuntu-latest
@@ -300,6 +309,7 @@ jobs:
             gh release upload ${{needs.new-release.outputs.draft-tag}} tinitex.zip tinitex.tgz tinitex.tar.gz --clobber
 
   deploy:
+    if: false
     needs: [new-release, build-windows, build-linux, build-mac, tinitex]
     runs-on: ubuntu-latest
     name: Publish new daily release
@@ -313,7 +323,7 @@ jobs:
           echo "## TeX Live version" >> notes.md
           echo "" >> notes.md
           echo '```' >> notes.md
-          cat <<EOF >> notes.md 
+          cat <<EOF >> notes.md
           ${{ needs.build-linux.outputs.tlmgr-version }}
           EOF
           echo '```' >> notes.md
@@ -331,6 +341,7 @@ jobs:
           echo -e "\n::endgroup::"
 
   cleaning:
+    if: false
     needs: [new-release, deploy]
     if: ${{ failure() || cancelled() }}
     runs-on: ubuntu-latest
